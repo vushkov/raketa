@@ -1,0 +1,78 @@
+CREATE DATABASE raketa_ushkov;
+
+USE raketa_ushkov;
+
+CREATE table periods(id INT AUTO_INCREMENT PRIMARY KEY, slave_id INT NOT NULL, owner_id INT NOT NULL, cur_rent_start INT NOT NULL, cur_rent_end INT NOT NULL, categories CHAR(25));
+CREATE table owners(id INT AUTO_INCREMENT PRIMARY KEY, isVIP BOOLEAN DEFAULT false);
+
+CREATE table slaves(id INT AUTO_INCREMENT PRIMARY KEY, nickname CHAR(25), sex CHAR(1), age INT, weight INT, skinColor CHAR(25), WHERECaught CHAR(25), descripion CHAR(255), hourRate INT, cost INT);
+
+INSERT INTO slaves(nickname, sex, age, weight, skinColor, WHERECaught, descripion, hourRate, cost) values('nickname1', 'M', 18, 56, 'Black', 'City1', 'Something1..', 3, 2500);
+INSERT INTO slaves(nickname, sex, age, weight, skinColor, WHERECaught, descripion, hourRate, cost) values('nickname2', 'F', 65, 90, 'White', 'City2', 'Something2..', 5, 3750);
+INSERT INTO slaves(nickname, sex, age, weight, skinColor, WHERECaught, descripion, hourRate, cost) values('nickname3', 'M', 55, 59, 'White', 'City3', 'Something3..', 4, 9550);
+INSERT INTO slaves(nickname, sex, age, weight, skinColor, WHERECaught, descripion, hourRate, cost) values('nickname4', 'F', 25, 47, 'Black', 'City4', 'Something4..', 10, 1500);
+INSERT INTO slaves(nickname, sex, age, weight, skinColor, WHERECaught, descripion, hourRate, cost) values('nickname5', 'F', 45, 67, 'Black', 'City5', 'Something5..', 7, 2600);
+INSERT INTO slaves(nickname, sex, age, weight, skinColor, WHERECaught, descripion, hourRate, cost) values('nickname6', 'M', 70, 79, 'White', 'City6', 'Something6..', 9, 4500);
+INSERT INTO slaves(nickname, sex, age, weight, skinColor, WHERECaught, descripion, hourRate, cost) values('nickname7', 'M', 78, 65, 'Black', 'City7', 'Something7..', 11, 7500);
+INSERT INTO slaves(nickname, sex, age, weight, skinColor, WHERECaught, descripion, hourRate, cost) values('nickname8', 'M', 64, 59, 'White', 'City8', 'Something8..', 18, 4200);
+INSERT INTO slaves(nickname, sex, age, weight, skinColor, WHERECaught, descripion, hourRate, cost) values('nickname9', 'M', 59, 61, 'White', 'City9', 'Something9..', 12, 9300);
+INSERT INTO slaves(nickname, sex, age, weight, skinColor, WHERECaught, descripion, hourRate, cost) values('nickname10', 'F', 49, 60, 'Black', 'City10', 'Something10..', 11, 3450);
+INSERT INTO slaves(nickname, sex, age, weight, skinColor, WHERECaught, descripion, hourRate, cost) values('nickname11', 'M', 50, 43, 'Black', 'City11', 'Something11..', 7, 3050);
+INSERT INTO slaves(nickname, sex, age, weight, skinColor, WHERECaught, descripion, hourRate, cost) values('nickname12', 'M', 59, 45, 'Black', 'City12', 'Something12..', 6, 48050);
+
+CREATE table categories(id INT AUTO_INCREMENT PRIMARY KEY, name varchar(100), slave_id INT, PID INT);
+
+INSERT INTO categories(name, PID) values('For kitchen', 0);
+INSERT INTO categories(name, slave_id, PID) values('Cooking', 2, 1);
+INSERT INTO categories(name, slave_id, PID) values('Washing dishes', 3, 1);
+INSERT INTO categories(name, slave_id, PID) values('Cooking', 4, 1);
+INSERT INTO categories(name, slave_id, PID) values('Cooking', 12, 1);
+INSERT INTO categories(name, slave_id, PID) values('Washing dishes', 5, 1);
+INSERT INTO categories(name, slave_id, PID) values('Washing dishes', 6, 1);
+INSERT INTO categories(name, PID) values('Outdoor work', 0);
+INSERT INTO categories(name, slave_id, PID) values('Dig a hole', 6, 8);
+INSERT INTO categories(name, slave_id, PID) values('Dig a hole', 7, 8);
+INSERT INTO categories(name, slave_id, PID) values('Don not dig a hole', 8, 8);
+INSERT INTO categories(name, slave_id, PID) values('Don not dig a hole', 2, 8);
+INSERT INTO categories(name, PID) values('Horse stable', 0);
+INSERT INTO categories(name, slave_id, PID) values('Horse cleaning', 1, 13);
+INSERT INTO categories(name, slave_id, PID) values('Horse cleaning', 2, 13);
+INSERT INTO categories(name, slave_id, PID) values('Horse cleaning', 3, 13);
+INSERT INTO categories(name, slave_id, PID) values('Horse cleaning', 4, 13);
+INSERT INTO categories(name, slave_id, PID) values('Horse cleaning', 5, 13);
+INSERT INTO categories(name, slave_id, PID) values('Horse cleaning', 6, 13);
+INSERT INTO categories(name, slave_id, PID) values('Horse cleaning', 7, 13);
+INSERT INTO categories(name, slave_id, PID) values('Horse cleaning', 8, 13);
+INSERT INTO categories(name, slave_id, PID) values('Horse cleaning', 9, 13);
+INSERT INTO categories(name, slave_id, PID) values('Horse cleaning', 10, 13);
+INSERT INTO categories(name, slave_id, PID) values('Horse cleaning', 11, 13);
+INSERT INTO categories(name, slave_id, PID) values('Horse feeding', 1, 13);
+INSERT INTO categories(name, slave_id, PID) values('Horse feeding', 2, 13);
+
+SELECT * FROM slaves;
+
+SELECT min(cost) AS min_cost FROM slaves WHERE weight>60;
+SELECT max(cost) AS max_cost FROM slaves WHERE weight>60;
+SELECT avg(cost) AS avg_cost FROM slaves WHERE weight>60;
+
+SELECT * FROM categories;
+
+SELECT name, COUNT(*) AS cnt
+FROM categories 
+GROUP BY name 
+HAVING COUNT(*) > 10;
+
+SELECT c.name AS cat_name, sum(s.cost) AS sum_cost
+FROM categories AS c 
+JOIN slaves AS s ON c.slave_id=s.id
+GROUP BY cat_name
+ORDER BY sum_cost DESC
+LIMIT 1;
+
+SELECT c.name AS cat_name, COUNT(IF (s.sex='F', s.sex, null)) AS female, COUNT(IF (s.sex='M', s.sex, null)) AS male
+FROM categories AS c 
+JOIN slaves AS s ON c.slave_id=s.id 
+GROUP BY cat_name
+HAVING female<male;
+
+SELECT COUNT(*) AS slaves_in_for_kitchen FROM categories WHERE PID=(SELECT id FROM categories WHERE name='For kitchen');
